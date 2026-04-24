@@ -118,6 +118,7 @@ input:focus, select:focus { outline: none; border-color: #2d8a4e; background: wh
 .record-info .record-time { font-size: 12px; color: #888; margin-top: 2px; }
 .record-amount { font-weight: 700; color: #2d8a4e; font-size: 18px; }
 
+/* 村庄表格样式 */
 .village-table {
   width: 100%;
   border-collapse: collapse;
@@ -160,6 +161,7 @@ input:focus, select:focus { outline: none; border-color: #2d8a4e; background: wh
   text-align: right;
 }
 
+/* 价格快捷按钮 */
 .price-quick {
   display: inline-flex;
   gap: 4px;
@@ -179,6 +181,7 @@ input:focus, select:focus { outline: none; border-color: #2d8a4e; background: wh
 .price-btn.p5 { border-color: #e65100; color: #e65100; background: #fff3e0; }
 .price-btn.used { background: #2d8a4e; color: white; border-color: #2d8a4e; }
 
+/* 合计行 */
 .total-row td {
   border-top: 2px solid #2d8a4e !important;
   padding-top: 10px !important;
@@ -212,6 +215,7 @@ input:focus, select:focus { outline: none; border-color: #2d8a4e; background: wh
 .sort-btn.active { border-color: #2d8a4e; color: #2d8a4e; background: #e8f5e9; }
 .sort-btn:active { background: #e8f5e9; }
 
+/* 自定义添加样式 */
 .add-row td {
   background: #fafffa;
   padding: 10px 4px;
@@ -262,6 +266,7 @@ input:focus, select:focus { outline: none; border-color: #2d8a4e; background: wh
 }
 .del-btn:active { transform: scale(0.9); background: #ef9a9a; }
 
+/* ===== 日统计样式 ===== */
 .village-status-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -337,6 +342,7 @@ input:focus, select:focus { outline: none; border-color: #2d8a4e; background: wh
   line-height: 1.6;
 }
 
+/* ===== 月统计样式 ===== */
 .month-nav {
   display: flex;
   align-items: center;
@@ -392,6 +398,7 @@ input:focus, select:focus { outline: none; border-color: #2d8a4e; background: wh
 .best-day-box .bd-value { font-size: 22px; font-weight: 800; color: #e65100; }
 .best-day-box .bd-date { font-size: 13px; color: #666; margin-top: 2px; }
 
+/* 提醒设置 */
 .reminder-setting {
   display: flex;
   align-items: center;
@@ -408,6 +415,7 @@ input:focus, select:focus { outline: none; border-color: #2d8a4e; background: wh
   font-size: 16px;
 }
 
+/* ===== 未付款备忘录样式 ===== */
 .debt-banner {
   background: linear-gradient(135deg, #ffebee, #ffcdd2);
   border-radius: 12px;
@@ -556,59 +564,13 @@ input:focus, select:focus { outline: none; border-color: #2d8a4e; background: wh
   padding: 8px 10px;
   font-size: 14px;
 }
-
-/* 同步状态指示器 */
-.sync-indicator {
-  position: fixed;
-  bottom: 40px;
-  right: 16px;
-  background: white;
-  border-radius: 20px;
-  padding: 6px 14px;
-  font-size: 11px;
-  color: #666;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.sync-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #4caf50;
-}
-.sync-dot.syncing { background: #ff9800; animation: pulse 1s infinite; }
-.sync-dot.error { background: #f44336; }
-@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-
-/* 加载遮罩 */
-.loading-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(255,255,255,0.9);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-}
-.loading-spinner {
-  width: 40px; height: 40px;
-  border: 4px solid #e8f5e9;
-  border-top-color: #2d8a4e;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
 <div class="header">
   <h1>📋 小财神卖水统计表</h1>
-  <p>西晃山天然矿泉水 · 在线协作版</p>
+  <p>西晃山天然矿泉水 · 到村统计</p>
 </div>
 
 <div class="tab-bar">
@@ -817,180 +779,41 @@ input:focus, select:focus { outline: none; border-color: #2d8a4e; background: wh
 </div>
 
 <div style="position:fixed;bottom:0;left:0;right:0;background:#fff3e0;padding:8px 16px;text-align:center;font-size:11px;color:#e65100;border-top:1px solid #ffe0b2;">
-💡 日统计看哪些村没去 · 月统计看整月成绩 · 欠款备忘录记谁没付钱 · 数据云端同步
-</div>
-
-<div class="sync-indicator" id="syncIndicator">
-  <div class="sync-dot" id="syncDot"></div>
-  <span id="syncText">已连接</span>
+💡 日统计看哪些村没去 · 月统计看整月成绩 · 欠款备忘录记谁没付钱
 </div>
 
 <script>
-// ========== 本地服务器配置 ==========
-const SERVER_URL = window.location.origin; // 自动检测（同源）
-let _serverOnline = false;
-let _lastVersion = 0;
-let _pollTimer = null;
-
-let _dataCache = { villages: {}, expenses: {}, customVillages: [], customExpenses: [], debts: [], reminderDays: 3 };
-let 当前欠款筛选 = 'unpaid';
-
-// 基础数据
 let 村庄 = ['西皮溪','文昌阁','黄家团','兰家坪','滑石江','官村','锦和镇','寒池坳','谭家寨','岩门镇','大路坳','大塘','城东一期','城东二期','城东三期','马兰廉租房'];
 let 固定开支 = ['⛽加油','🍚吃饭','🎮零花钱'];
 
-// ========== 初始化服务器连接 ==========
-async function initServer() {
-  try {
-    let r = await fetch(SERVER_URL + '/api/ping', {signal: AbortSignal.timeout(3000)});
-    if (r.ok) {
-      _serverOnline = true;
-      setSyncStatus('connected', '已连接');
-      return true;
-    }
-  } catch(e) {}
-  _serverOnline = false;
-  setSyncStatus('error', '离线模式');
-  return false;
-}
-
-function setSyncStatus(status, text) {
-  let dot = document.getElementById('syncDot');
-  let txt = document.getElementById('syncText');
-  if (dot) {
-    dot.className = 'sync-dot';
-    if (status === 'syncing') dot.classList.add('syncing');
-    if (status === 'error') dot.classList.add('error');
-  }
-  if (txt) txt.textContent = text;
-}
-
-// ========== 数据读写（云端优先，本地回退）==========
-function 读自定义() { return _dataCache.customVillages; }
-function 存自定义(l) { _dataCache.customVillages = l; saveToCloud('custom_villages', l); }
-function 读自定义开支() { return _dataCache.customExpenses; }
-function 存自定义开支(l) { _dataCache.customExpenses = l; saveToCloud('custom_expenses', l); }
+function 读自定义() { try { return JSON.parse(localStorage.getItem('卖水自定义村')) || []; } catch(e) { return []; } }
+function 存自定义(l) { localStorage.setItem('卖水自定义村', JSON.stringify(l)); }
+function 读自定义开支() { try { return JSON.parse(localStorage.getItem('卖水自定义开支')) || []; } catch(e) { return []; } }
+function 存自定义开支(l) { localStorage.setItem('卖水自定义开支', JSON.stringify(l)); }
 function 获取所有村庄() { return 村庄.concat(读自定义()); }
 function 获取所有开支项() { return 固定开支.concat(读自定义开支()); }
-function 读数据() { return _dataCache.villages; }
-function 存数据(d) { _dataCache.villages = d; saveToCloud('village_data', d); }
-function 读开支数据() { return _dataCache.expenses; }
-function 存开支数据(d) { _dataCache.expenses = d; saveToCloud('expense_data', d); }
-function 读欠款() { return _dataCache.debts; }
-function 存欠款(d) { _dataCache.debts = d; saveToCloud('debt_data', d); }
-function 读提醒天数() { return _dataCache.reminderDays || 3; }
-function 保存提醒设置() {
-  _dataCache.reminderDays = parseInt(document.getElementById('提醒天数').value) || 3;
-  saveToCloud('reminder_days', _dataCache.reminderDays);
-}
+function 读数据() { try { return JSON.parse(localStorage.getItem('卖水统计表')) || {}; } catch(e) { return {}; } }
+function 存数据(d) { localStorage.setItem('卖水统计表', JSON.stringify(d)); }
+function 读开支数据() { try { return JSON.parse(localStorage.getItem('卖水开支')) || {}; } catch(e) { return {}; } }
+function 存开支数据(d) { localStorage.setItem('卖水开支', JSON.stringify(d)); }
+function 读提醒天数() { return parseInt(localStorage.getItem('卖水提醒天数')) || 3; }
+function 保存提醒设置() { localStorage.setItem('卖水提醒天数', document.getElementById('提醒天数').value); }
 
-// ========== 云端存取（本地服务器版） ==========
-async function saveToCloud(key, value) {
-  // 始终写入localStorage作为备份
-  localStorage.setItem('卖水_' + key, JSON.stringify(value));
+// ===== 欠款备忘录数据 =====
+function 读欠款() { try { return JSON.parse(localStorage.getItem('卖水欠款')) || []; } catch(e) { return []; } }
+function 存欠款(d) { localStorage.setItem('卖水欠款', JSON.stringify(d)); }
+let 当前欠款筛选 = 'unpaid';
 
-  if (!_serverOnline) return;
-  setSyncStatus('syncing', '同步中...');
-  try {
-    let r = await fetch(SERVER_URL + '/api/data', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({key: key, value: value})
-    });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    let res = await r.json();
-    _lastVersion = res.version || _lastVersion;
-    setSyncStatus('connected', '已同步');
-  } catch(e) {
-    console.error('服务器保存失败:', e);
-    setSyncStatus('error', '同步失败');
-  }
-}
-
-async function loadFromCloud(key) {
-  try { return JSON.parse(localStorage.getItem('卖水_' + key)); } catch(e) { return null; }
-}
-
-function _applyRow(key, value) {
-  switch(key) {
-    case 'custom_villages': _dataCache.customVillages = value || []; break;
-    case 'custom_expenses': _dataCache.customExpenses = value || []; break;
-    case 'village_data': _dataCache.villages = value || {}; break;
-    case 'expense_data': _dataCache.expenses = value || {}; break;
-    case 'debt_data': _dataCache.debts = value || []; break;
-    case 'reminder_days': _dataCache.reminderDays = value || 3; break;
-  }
-}
-
-async function loadAllData() {
-  // 先从localStorage加载（保证有数据）
-  _dataCache.customVillages = JSON.parse(localStorage.getItem('卖水_custom_villages') || '[]');
-  _dataCache.customExpenses = JSON.parse(localStorage.getItem('卖水_custom_expenses') || '[]');
-  _dataCache.villages = JSON.parse(localStorage.getItem('卖水_village_data') || '{}');
-  _dataCache.expenses = JSON.parse(localStorage.getItem('卖水_expense_data') || '{}');
-  _dataCache.debts = JSON.parse(localStorage.getItem('卖水_debt_data') || '[]');
-  _dataCache.reminderDays = parseInt(localStorage.getItem('卖水_reminder_days')) || 3;
-
-  if (!_serverOnline) return;
-  setSyncStatus('syncing', '加载数据...');
-  try {
-    let r = await fetch(SERVER_URL + '/api/data');
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    let res = await r.json();
-    if (res.data) {
-      for (let [key, row] of Object.entries(res.data)) {
-        _applyRow(key, row.value);
-        // 同步到localStorage
-        localStorage.setItem('卖水_' + key, JSON.stringify(row.value));
-      }
-    }
-    _lastVersion = res.version || 0;
-    setSyncStatus('connected', '已加载');
-  } catch(e) {
-    console.error('服务器加载失败:', e);
-    setSyncStatus('error', '加载失败');
-  }
-}
-
-// ========== 轮询同步（替代Supabase实时订阅） ==========
-function startPolling() {
-  if (_pollTimer) return;
-  _pollTimer = setInterval(async () => {
-    if (!_serverOnline) return;
-    try {
-      let r = await fetch(SERVER_URL + '/api/version', {signal: AbortSignal.timeout(3000)});
-      if (!r.ok) return;
-      let res = await r.json();
-      if (res.version && res.version !== _lastVersion) {
-        // 服务器有新数据，拉取更新
-        let dr = await fetch(SERVER_URL + '/api/data');
-        if (!dr.ok) return;
-        let data = await dr.json();
-        if (data.data) {
-          let changed = false;
-          for (let [key, row] of Object.entries(data.data)) {
-            _applyRow(key, row.value);
-            localStorage.setItem('卖水_' + key, JSON.stringify(row.value));
-          }
-          _lastVersion = data.version;
-          // 刷新当前页面
-          let activeTab = document.querySelector('.tab.active');
-          if (activeTab) activeTab.click();
-        }
-      }
-    } catch(e) {}
-  }, 5000); // 每5秒检查一次
-}
-
-// ========== 工具函数 ==========
 function 今天() {
   const d = new Date();
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
+
 function 日期差(d1, d2) {
   let a = new Date(d1), b = new Date(d2);
   return Math.floor((a - b) / 86400000);
 }
+
 function 获取村最后访问(村名, 截止日期) {
   let all = 读数据();
   let 最后 = null;
@@ -1007,7 +830,7 @@ function 获取村最后访问(村名, 截止日期) {
   return 最后;
 }
 
-// ========== 欠款备忘录 ==========
+// ===== 欠款备忘录 =====
 function 欠款选村变化() {
   let sel = document.getElementById('欠款_村镇');
   let custom = document.getElementById('欠款_自定义名');
@@ -1019,9 +842,11 @@ function 刷新欠款() {
   let 未付 = 欠款列表.filter(d => !d.已付);
   let 已付 = 欠款列表.filter(d => d.已付);
   let 总欠 = 未付.reduce((s, d) => s + (parseFloat(d.金额) || 0), 0);
+
   document.getElementById('欠款总额').textContent = 总欠;
   document.getElementById('欠款笔数').textContent = 未付.length + '笔欠款';
 
+  // 今日页面的欠款提示
   let 今日提示 = document.getElementById('今日欠款提示');
   if (未付.length > 0) {
     今日提示.innerHTML = '<div class="alert-banner" style="background:linear-gradient(135deg,#ffebee,#ffcdd2);border-left-color:#c62828;cursor:pointer;" onclick="切换标签(\'debt\')">' +
@@ -1031,17 +856,23 @@ function 刷新欠款() {
     今日提示.innerHTML = '';
   }
 
+  // 填充村镇选择器
   let allV = 获取所有村庄();
   let sel = document.getElementById('欠款_村镇');
   let 当前值 = sel.value;
   sel.innerHTML = '<option value="">选择村镇...</option>';
-  for (let v of allV) sel.innerHTML += '<option value="'+v+'">'+v+'</option>';
+  for (let v of allV) {
+    sel.innerHTML += '<option value="'+v+'">'+v+'</option>';
+  }
   sel.value = 当前值;
 
+  // 筛选
   let 显示列表;
   if (当前欠款筛选 === 'unpaid') 显示列表 = 未付;
   else if (当前欠款筛选 === 'paid') 显示列表 = 已付;
   else 显示列表 = 欠款列表;
+
+  // 排序：未付在前，按日期倒序
   显示列表.sort((a, b) => {
     if (a.已付 !== b.已付) return a.已付 ? 1 : -1;
     return (b.日期 || '').localeCompare(a.日期 || '');
@@ -1053,15 +884,18 @@ function 刷新欠款() {
   } else {
     for (let d of 显示列表) {
       let 天数差 = d.已付 ? 0 : 日期差(今天(), d.日期);
-      let 天数提示 = '', 天数样式 = '';
+      let 天数提示 = '';
+      let 天数样式 = '';
       if (!d.已付 && 天数差 > 0) {
         天数提示 = '已欠' + 天数差 + '天';
         天数样式 = 天数差 >= 7 ? 'urgent' : 'normal';
       }
       html += '<div class="debt-card ' + (d.已付 ? 'paid' : '') + '">' +
         (天数提示 ? '<div class="debt-days ' + 天数样式 + '">' + 天数提示 + '</div>' : '') +
-        '<div class="debt-top"><div class="debt-village">' + (d.已付 ? '✅ ' : '❌ ') + d.村名 + '</div>' +
-        '<div class="debt-amount">' + d.金额 + '元</div></div>' +
+        '<div class="debt-top">' +
+          '<div class="debt-village">' + (d.已付 ? '✅ ' : '❌ ') + d.村名 + '</div>' +
+          '<div class="debt-amount">' + d.金额 + '元</div>' +
+        '</div>' +
         '<div class="debt-date">📅 ' + d.日期 + '</div>' +
         (d.备注 ? '<div class="debt-note">💬 ' + d.备注 + '</div>' : '') +
         (d.已付 && d.付款日期 ? '<div class="debt-paid-date">✅ ' + d.付款日期 + ' 已收款</div>' : '') +
@@ -1079,34 +913,53 @@ function 添加欠款() {
   let 金额 = document.getElementById('欠款_金额').value;
   let 日期 = document.getElementById('欠款_日期').value || 今天();
   let 备注 = document.getElementById('欠款_备注').value.trim();
+
   if (!村名) { alert('请填写村镇或客户名'); return; }
   if (!金额 || parseFloat(金额) <= 0) { alert('请填写欠款金额'); return; }
+
   let 列表 = 读欠款();
   列表.push({
     id: Date.now().toString(36) + Math.random().toString(36).substr(2, 4),
-    村名: 村名, 金额: parseFloat(金额), 日期: 日期, 备注: 备注,
-    已付: false, 付款日期: null
+    村名: 村名,
+    金额: parseFloat(金额),
+    日期: 日期,
+    备注: 备注,
+    已付: false,
+    付款日期: null
   });
   存欠款(列表);
+
+  // 清空表单
   document.getElementById('欠款_村镇').value = '';
   document.getElementById('欠款_自定义名').value = '';
   document.getElementById('欠款_金额').value = '';
   document.getElementById('欠款_备注').value = '';
   document.getElementById('欠款_日期').value = 今天();
+
   刷新欠款();
 }
 
 function 标记已付(id) {
   let 列表 = 读欠款();
   let 项 = 列表.find(d => d.id === id);
-  if (项) { 项.已付 = true; 项.付款日期 = 今天(); 存欠款(列表); 刷新欠款(); }
+  if (项) {
+    项.已付 = true;
+    项.付款日期 = 今天();
+    存欠款(列表);
+    刷新欠款();
+  }
 }
 
 function 撤销已付(id) {
   if (!confirm('确定撤销？这笔款重新标记为未付')) return;
   let 列表 = 读欠款();
   let 项 = 列表.find(d => d.id === id);
-  if (项) { 项.已付 = false; 项.付款日期 = null; 存欠款(列表); 刷新欠款(); }
+  if (项) {
+    项.已付 = false;
+    项.付款日期 = null;
+    存欠款(列表);
+    刷新欠款();
+  }
 }
 
 function 删除欠款(id) {
@@ -1124,13 +977,14 @@ function 筛选欠款(type, el) {
   刷新欠款();
 }
 
-// ========== 日统计 ==========
+// ===== 日统计 =====
 function 刷新日统计() {
   let 日期 = document.getElementById('日统计日期').value || 今天();
   let all = 读数据();
   let allV = 获取所有村庄();
   let 提醒天数 = 读提醒天数();
   let 当天 = all[日期] || {};
+
   let 已去 = 0, 总桶 = 0, 总钱 = 0;
   let 村状态 = [];
   for (let v of allV) {
@@ -1140,17 +994,36 @@ function 刷新日统计() {
     let 钱 = 桶 * 价;
     let 今日去了 = 桶 > 0;
     if (今日去了) { 已去++; 总桶 += 桶; 总钱 += 钱; }
+
     let 最后访问 = 获取村最后访问(v, 日期);
     let 状态, 样式, 提示;
-    if (今日去了) { 状态 = '今天去过'; 样式 = 'visited'; 提示 = '✅ ' + 桶 + '桶 · ' + 钱 + '元'; }
-    else if (最后访问) {
+    if (今日去了) {
+      状态 = '今天去过';
+      样式 = 'visited';
+      提示 = '✅ ' + 桶 + '桶 · ' + 钱 + '元';
+    } else if (最后访问) {
       let 天数差 = 日期差(日期, 最后访问);
-      if (天数差 >= 提醒天数 * 2) { 样式 = 'alert-red'; 状态 = '已' + 天数差 + '天没去'; 提示 = '🔴 上次: ' + 最后访问; }
-      else if (天数差 >= 提醒天数) { 样式 = 'alert-orange'; 状态 = '已' + 天数差 + '天没去'; 提示 = '⚠️ 上次: ' + 最后访问; }
-      else { 样式 = 'alert-yellow'; 状态 = 天数差 + '天前去过'; 提示 = '上次: ' + 最后访问; }
-    } else { 样式 = 'never'; 状态 = '从未去过'; 提示 = '🆕 新村镇'; }
+      if (天数差 >= 提醒天数 * 2) {
+        样式 = 'alert-red';
+        状态 = '已' + 天数差 + '天没去';
+        提示 = '🔴 上次: ' + 最后访问;
+      } else if (天数差 >= 提醒天数) {
+        样式 = 'alert-orange';
+        状态 = '已' + 天数差 + '天没去';
+        提示 = '⚠️ 上次: ' + 最后访问;
+      } else {
+        样式 = 'alert-yellow';
+        状态 = 天数差 + '天前去过';
+        提示 = '上次: ' + 最后访问;
+      }
+    } else {
+      样式 = 'never';
+      状态 = '从未去过';
+      提示 = '🆕 新村镇';
+    }
     村状态.push({ 村: v, 样式, 状态, 提示, 桶, 钱 });
   }
+
   document.getElementById('日统计_已去').textContent = 已去 + '/' + allV.length;
   document.getElementById('日统计_桶数').textContent = 总桶;
   document.getElementById('日统计_收入').textContent = 总钱;
@@ -1159,19 +1032,24 @@ function 刷新日统计() {
   let 提醒html = '';
   if (需提醒.length > 0) {
     提醒html = '<div class="alert-banner"><h4>🔔 ' + 需提醒.length + '个村镇该去送水了！</h4><p>';
-    for (let v of 需提醒) 提醒html += (v.样式 === 'alert-red' ? '🔴 ' : '⚠️ ') + v.村 + '：' + v.状态 + '<br>';
+    for (let v of 需提醒) {
+      提醒html += (v.样式 === 'alert-red' ? '🔴 ' : '⚠️ ') + v.村 + '：' + v.状态 + '<br>';
+    }
     提醒html += '</p></div>';
   }
   document.getElementById('日统计提醒栏').innerHTML = 提醒html;
 
   let 排序优先 = { 'alert-red': 0, 'alert-orange': 1, 'alert-yellow': 2, 'never': 3, 'visited': 4 };
   村状态.sort((a, b) => 排序优先[a.样式] - 排序优先[b.样式]);
+
   let 卡片html = '';
   for (let v of 村状态) {
     卡片html += '<div class="village-card ' + v.样式 + '" onclick="跳到日期填(\'' + 日期 + '\',\'' + v.村 + '\')">' +
-      '<div class="vc-name">' + v.村 + '</div><div class="vc-status">' + v.状态 + '</div>' +
+      '<div class="vc-name">' + v.村 + '</div>' +
+      '<div class="vc-status">' + v.状态 + '</div>' +
       '<div class="vc-detail">' + v.提示 + '</div>' +
-      (v.桶 > 0 ? '<div class="vc-buckets">' + v.桶 + '桶</div>' : '') + '</div>';
+      (v.桶 > 0 ? '<div class="vc-buckets">' + v.桶 + '桶</div>' : '') +
+      '</div>';
   }
   document.getElementById('日统计_村镇列表').innerHTML = 卡片html;
 }
@@ -1185,67 +1063,122 @@ function 跳到日期填(日期, 村名) {
     let idx = allV.indexOf(村名);
     if (idx >= 0) {
       let 行 = document.getElementById('行_' + idx);
-      if (行) { 行.scrollIntoView({ behavior: 'smooth', block: 'center' }); 行.style.background = '#fffde7'; setTimeout(function() { 行.style.background = ''; }, 2000); }
+      if (行) {
+        行.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        行.style.background = '#fffde7';
+        setTimeout(function() { 行.style.background = ''; }, 2000);
+      }
     }
   }, 300);
 }
 
-// ========== 月统计 ==========
+// ===== 月统计 =====
 let 当前月 = new Date();
-function 切换月份(delta) { 当前月.setMonth(当前月.getMonth() + delta); 刷新月统计(); }
+
+function 切换月份(delta) {
+  当前月.setMonth(当前月.getMonth() + delta);
+  刷新月统计();
+}
 
 function 刷新月统计() {
   let 年 = 当前月.getFullYear();
   let 月 = 当前月.getMonth() + 1;
   let 月前缀 = 年 + '-' + String(月).padStart(2, '0');
   document.getElementById('月统计_标题').textContent = 年 + '年' + 月 + '月';
+
   let all = 读数据();
   let 开支all = 读开支数据();
   let allV = 获取所有村庄();
   let allExp = 获取所有开支项();
+
   let 月桶 = 0, 月钱 = 0, 月开支额 = 0;
   let 每日数据 = [];
   let 村月统计 = {};
   for (let v of allV) 村月统计[v] = { 桶: 0, 钱: 0 };
   let 最佳日 = { 日期: '', 钱: 0 };
+  let 有数据天数 = 0;
+
   for (let 日期 in all) {
     if (!日期.startsWith(月前缀)) continue;
-    let 天 = all[日期]; let 日桶 = 0, 日钱 = 0, 有数据 = false;
-    for (let v of allV) { let d = 天[v] || {}; let 桶 = parseFloat(d.桶) || 0; let 价 = parseFloat(d.价) || 0; 村月统计[v].桶 += 桶; 村月统计[v].钱 += 桶 * 价; 日桶 += 桶; 日钱 += 桶 * 价; if (桶 > 0) 有数据 = true; }
-    let 当天开支 = 开支all[日期] || {}; let 日开支 = 0;
+    let 天 = all[日期];
+    let 日桶 = 0, 日钱 = 0, 有数据 = false;
+    for (let v of allV) {
+      let d = 天[v] || {};
+      let 桶 = parseFloat(d.桶) || 0;
+      let 价 = parseFloat(d.价) || 0;
+      let 钱 = 桶 * 价;
+      村月统计[v].桶 += 桶;
+      村月统计[v].钱 += 钱;
+      日桶 += 桶;
+      日钱 += 钱;
+      if (桶 > 0) 有数据 = true;
+    }
+    let 当天开支 = 开支all[日期] || {};
+    let 日开支 = 0;
     for (let exp of allExp) { 日开支 += parseFloat(当天开支[exp]) || 0; }
     let 日净 = 日钱 - 日开支;
-    月桶 += 日桶; 月钱 += 日钱; 月开支额 += 日开支;
+    月桶 += 日桶;
+    月钱 += 日钱;
+    月开支额 += 日开支;
+    if (有数据) 有数据天数++;
     if (日钱 > 最佳日.钱) 最佳日 = { 日期: 日期, 钱: 日钱, 桶: 日桶, 净: 日净 };
     每日数据.push({ 日期: 日期, 桶: 日桶, 钱: 日钱, 开支: 日开支, 净: 日净 });
   }
+
   document.getElementById('月桶数').textContent = 月桶;
   document.getElementById('月收入').textContent = 月钱;
   document.getElementById('月开支').textContent = 月开支额;
   let 月净 = 月钱 - 月开支额;
   document.getElementById('月净收入').textContent = (月净 >= 0 ? '+' : '') + 月净;
   let 月框 = document.getElementById('月净收入框');
-  if (月净 < 0) 月框.classList.add('negative'); else 月框.classList.remove('negative');
+  if (月净 < 0) { 月框.classList.add('negative'); } else { 月框.classList.remove('negative'); }
 
   if (最佳日.日期) {
-    document.getElementById('月最佳日').innerHTML = '<div class="best-day-box"><div class="bd-label">🏆 本月最佳日</div><div class="bd-value">' + 最佳日.钱 + '元</div><div class="bd-date">' + 最佳日.日期 + ' · ' + 最佳日.桶 + '桶 · 净收入' + 最佳日.净 + '元</div></div>';
-  } else { document.getElementById('月最佳日').innerHTML = ''; }
+    document.getElementById('月最佳日').innerHTML =
+      '<div class="best-day-box"><div class="bd-label">🏆 本月最佳日</div>' +
+      '<div class="bd-value">' + 最佳日.钱 + '元</div>' +
+      '<div class="bd-date">' + 最佳日.日期 + ' · ' + 最佳日.桶 + '桶 · 净收入' + 最佳日.净 + '元</div></div>';
+  } else {
+    document.getElementById('月最佳日').innerHTML = '';
+  }
 
   每日数据.sort((a, b) => a.日期 > b.日期 ? -1 : 1);
   let 日html = '';
-  if (每日数据.length === 0) { 日html = '<div class="empty-msg">本月暂无数据</div>'; }
-  else { for (let d of 每日数据) { if (d.桶 === 0 && d.开支 === 0) continue; let 净样式 = d.净 >= 0 ? 'positive' : 'negative'; 日html += '<div class="month-day-row" onclick="跳到日期(\'' + d.日期 + '\')"><span class="mdr-date">' + d.日期.substring(5) + '</span><span class="mdr-buckets">' + d.桶 + '桶</span><span class="mdr-income">' + d.钱 + '元</span><span class="mdr-net ' + 净样式 + '">' + (d.净 >= 0 ? '+' : '') + d.净 + '</span></div>'; } }
+  if (每日数据.length === 0) {
+    日html = '<div class="empty-msg">本月暂无数据</div>';
+  } else {
+    for (let d of 每日数据) {
+      if (d.桶 === 0 && d.开支 === 0) continue;
+      let 净样式 = d.净 >= 0 ? 'positive' : 'negative';
+      日html += '<div class="month-day-row" onclick="跳到日期(\'' + d.日期 + '\')">' +
+        '<span class="mdr-date">' + d.日期.substring(5) + '</span>' +
+        '<span class="mdr-buckets">' + d.桶 + '桶</span>' +
+        '<span class="mdr-income">' + d.钱 + '元</span>' +
+        '<span class="mdr-net ' + 净样式 + '">' + (d.净 >= 0 ? '+' : '') + d.净 + '</span></div>';
+    }
+  }
   document.getElementById('月统计_每日列表').innerHTML = 日html;
 
   let 排行 = Object.entries(村月统计).filter(([k, v]) => v.桶 > 0);
   排行.sort((a, b) => b[1].钱 - a[1].钱);
   let 排行html = '';
-  if (排行.length === 0) { 排行html = '<div class="empty-msg">本月暂无数据</div>'; }
-  else { let max = 排行[0][1].钱 || 1; for (let [村, v] of 排行) { let pct = Math.min(100, Math.round(v.钱 / max * 100)); 排行html += '<div style="display:flex;align-items:center;padding:8px 0;border-bottom:1px solid #eee;"><div style="width:80px;font-weight:500;">' + 村 + '</div><div style="flex:1;height:20px;background:#e8f5e9;border-radius:10px;overflow:hidden;margin:0 10px;"><div style="height:100%;width:' + pct + '%;background:#2d8a4e;border-radius:10px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:11px;color:white;font-weight:600;min-width:40px;">' + v.钱 + '元</div></div><div style="width:60px;text-align:right;font-size:13px;color:#888;">' + v.桶 + '桶</div></div>'; } }
+  if (排行.length === 0) {
+    排行html = '<div class="empty-msg">本月暂无数据</div>';
+  } else {
+    let max = 排行[0][1].钱 || 1;
+    for (let [村, v] of 排行) {
+      let pct = Math.min(100, Math.round(v.钱 / max * 100));
+      排行html += '<div style="display:flex;align-items:center;padding:8px 0;border-bottom:1px solid #eee;">' +
+        '<div style="width:80px;font-weight:500;">' + 村 + '</div>' +
+        '<div style="flex:1;height:20px;background:#e8f5e9;border-radius:10px;overflow:hidden;margin:0 10px;">' +
+        '<div style="height:100%;width:' + pct + '%;background:#2d8a4e;border-radius:10px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:11px;color:white;font-weight:600;min-width:40px;">' + v.钱 + '元</div></div>' +
+        '<div style="width:60px;text-align:right;font-size:13px;color:#888;">' + v.桶 + '桶</div></div>';
+    }
+  }
   document.getElementById('月统计_村镇排行').innerHTML = 排行html;
 }
 
-// ========== 今日填表 ==========
+// ===== 今日填表 =====
 function 加载当天() {
   let 日期 = document.getElementById('选择日期').value || 今天();
   let all = 读数据();
@@ -1254,6 +1187,7 @@ function 加载当天() {
   let 当天 = all[日期];
   let html = '';
   let 总桶 = 0, 总钱 = 0, 有记录 = 0;
+
   for (let i=0; i<allV.length; i++) {
     let v = allV[i];
     let d = 当天[v] || {桶:'', 价:''};
@@ -1262,13 +1196,24 @@ function 加载当天() {
     let 钱 = 桶 * 价;
     if (桶 > 0) { 总桶 += 桶; 有记录++; }
     总钱 += 钱;
-    let 价按钮 = '<span class="price-btn '+(价==4?'p4':'')+'" onclick="设价(\''+v+'\',4,'+i+')">4元</span><span class="price-btn '+(价==5?'p5':'')+'" onclick="设价(\''+v+'\',5,'+i+')">5元</span><span class="price-btn" onclick="自定额(\''+v+'\','+i+')">自定</span>';
+    let 价按钮 = '<span class="price-btn '+(价==4?'p4':'')+'" onclick="设价(\''+v+'\',4,'+i+')">4元</span>'+
+      '<span class="price-btn '+(价==5?'p5':'')+'" onclick="设价(\''+v+'\',5,'+i+')">5元</span>'+
+      '<span class="price-btn" onclick="自定额(\''+v+'\','+i+')">自定</span>';
     let 是否自定义 = 村庄.indexOf(v) == -1;
     let 序号 = 是否自定义 ? '✚' : (i<9?'0':'')+(i+1);
-    html += '<tr id="行_'+i+'"><td style="color:'+(是否自定义?'#2d8a4e':'#999')+';font-size:13px;">'+序号+'</td><td class="vname">'+v+'</td><td><input class="vinput" type="number" min="0" step="1" value="'+(d.桶||'')+'" oninput="更新('+i+')" onfocus="this.select()" placeholder="0"></td><td><div class="price-quick">'+价按钮+'</div><input class="vinput vprice" type="number" min="0" step="0.1" value="'+(d.价||'')+'" oninput="更新('+i+')" onfocus="this.select()" placeholder="价" style="margin-top:4px;font-size:14px;"></td><td class="vmoney" id="钱_'+i+'">'+(钱>0?钱:'')+'</td><td style="text-align:center;">'+(是否自定义 ? '<button class="del-btn" onclick="删除自定义('+i+')" title="移除此村">✕</button>' : '')+'</td></tr>';
+    html += '<tr id="行_'+i+'"><td style="color:'+(是否自定义?'#2d8a4e':'#999')+';font-size:13px;">'+序号+'</td>'+
+      '<td class="vname">'+v+'</td>'+
+      '<td><input class="vinput" type="number" min="0" step="1" value="'+(d.桶||'')+'" oninput="更新('+i+')" onfocus="this.select()" placeholder="0"></td>'+
+      '<td><div class="price-quick">'+价按钮+'</div><input class="vinput vprice" type="number" min="0" step="0.1" value="'+(d.价||'')+'" oninput="更新('+i+')" onfocus="this.select()" placeholder="价" style="margin-top:4px;font-size:14px;"></td>'+
+      '<td class="vmoney" id="钱_'+i+'">'+(钱>0?钱:'')+'</td>'+
+      '<td style="text-align:center;">'+(是否自定义 ? '<button class="del-btn" onclick="删除自定义('+i+')" title="移除此村">✕</button>' : '')+'</td></tr>';
   }
   html += '<tr class="total-row"><td></td><td>📊 合计</td><td class="total-num" id="合计桶">'+总桶+'</td><td></td><td class="total-money" id="合计钱">'+总钱+'</td><td></td></tr>';
-  html += '<tr class="add-row"><td style="text-align:center;color:#2d8a4e;font-size:16px;">➕</td><td><input class="vinput" id="新增村名" placeholder="填村镇名" style="font-size:14px;font-weight:500;"></td><td><input class="vinput" id="新增桶数" type="number" min="0" step="1" placeholder="桶数" style="font-size:14px;"></td><td><input class="vinput" id="新增价格" type="number" min="0" step="0.1" placeholder="单价" style="font-size:14px;"></td><td style="text-align:center;"><button class="add-btn" onclick="添加自定义()" title="添加此村">＋</button></td><td></td></tr>';
+  html += '<tr class="add-row"><td style="text-align:center;color:#2d8a4e;font-size:16px;">➕</td>'+
+    '<td><input class="vinput" id="新增村名" placeholder="填村镇名" style="font-size:14px;font-weight:500;"></td>'+
+    '<td><input class="vinput" id="新增桶数" type="number" min="0" step="1" placeholder="桶数" style="font-size:14px;"></td>'+
+    '<td><input class="vinput" id="新增价格" type="number" min="0" step="0.1" placeholder="单价" style="font-size:14px;"></td>'+
+    '<td style="text-align:center;"><button class="add-btn" onclick="添加自定义()" title="添加此村">＋</button></td><td></td></tr>';
   document.getElementById('表体').innerHTML = html;
 
   let 开支all = 读开支数据();
@@ -1283,10 +1228,16 @@ function 加载当天() {
     let amt = parseFloat(val) || 0;
     总开支额 += amt;
     let 是否自定义开支 = 固定开支.indexOf(name) == -1;
-    ehtml += '<tr id="开支行_'+i+'"><td style="font-size:16px;">'+name.substring(0,2)+'</td><td class="ename">'+name.substring(2)+'</td><td><input class="einput" type="number" min="0" step="0.1" value="'+(val||'')+'" oninput="更新开支('+i+')" onfocus="this.select()" placeholder="0"></td><td style="text-align:center;">'+(是否自定义开支 ? '<button class="del-btn" onclick="删除自定义开支('+i+')" title="移除此项">✕</button>' : '')+'</td></tr>';
+    ehtml += '<tr id="开支行_'+i+'"><td style="font-size:16px;">'+name.substring(0,2)+'</td>'+
+      '<td class="ename">'+name.substring(2)+'</td>'+
+      '<td><input class="einput" type="number" min="0" step="0.1" value="'+(val||'')+'" oninput="更新开支('+i+')" onfocus="this.select()" placeholder="0"></td>'+
+      '<td style="text-align:center;">'+(是否自定义开支 ? '<button class="del-btn" onclick="删除自定义开支('+i+')" title="移除此项">✕</button>' : '')+'</td></tr>';
   }
   ehtml += '<tr class="expense-total-row"><td></td><td>📊 开支合计</td><td class="total-money" id="合计开支" style="color:#e65100;font-size:20px;">'+总开支额+'</td><td></td></tr>';
-  ehtml += '<tr class="add-expense-row"><td style="text-align:center;color:#ff8f00;font-size:16px;">➕</td><td><input class="einput" id="新增开支名" placeholder="自定义开支项" style="font-size:14px;font-weight:500;"></td><td><input class="einput" id="新增开支额" type="number" min="0" step="0.1" placeholder="金额" style="font-size:14px;"></td><td style="text-align:center;"><button class="add-btn-orange" onclick="添加自定义开支()" title="添加开支项">＋</button></td></tr>';
+  ehtml += '<tr class="add-expense-row"><td style="text-align:center;color:#ff8f00;font-size:16px;">➕</td>'+
+    '<td><input class="einput" id="新增开支名" placeholder="自定义开支项" style="font-size:14px;font-weight:500;"></td>'+
+    '<td><input class="einput" id="新增开支额" type="number" min="0" step="0.1" placeholder="金额" style="font-size:14px;"></td>'+
+    '<td style="text-align:center;"><button class="add-btn-orange" onclick="添加自定义开支()" title="添加开支项">＋</button></td></tr>';
   document.getElementById('开支表体').innerHTML = ehtml;
 
   document.getElementById('今日桶数').textContent = 总桶;
@@ -1295,7 +1246,9 @@ function 加载当天() {
   let 净 = 总钱 - 总开支额;
   document.getElementById('净收入').textContent = (净>=0?'+':'')+净;
   let box = document.getElementById('净收入框');
-  if (净 < 0) box.classList.add('negative'); else box.classList.remove('negative');
+  if (净 < 0) { box.classList.add('negative'); } else { box.classList.remove('negative'); }
+
+  // 刷新欠款提示
   刷新欠款();
 }
 
@@ -1308,7 +1261,10 @@ function 添加自定义() {
   let all = 读数据();
   if (!all[日期]) all[日期] = {};
   let allV = 获取所有村庄();
-  if (allV.indexOf(村名) != -1) { all[日期][村名] = {桶:桶数||'', 价:价格||''}; 存数据(all); 加载当天(); return; }
+  if (allV.indexOf(村名) != -1) {
+    all[日期][村名] = {桶:桶数||'', 价:价格||''};
+    存数据(all); 加载当天(); return;
+  }
   let 自定义 = 读自定义();
   自定义.push(村名);
   存自定义(自定义);
@@ -1336,7 +1292,11 @@ function 添加自定义开支() {
   let 开支all = 读开支数据();
   if (!开支all[日期]) 开支all[日期] = {};
   let allExp = 获取所有开支项();
-  if (allExp.indexOf(全名) == -1) { let 自定义 = 读自定义开支(); 自定义.push(全名); 存自定义开支(自定义); }
+  if (allExp.indexOf(全名) == -1) {
+    let 自定义 = 读自定义开支();
+    自定义.push(全名);
+    存自定义开支(自定义);
+  }
   if (开支额) { 开支all[日期][全名] = 开支额; 存开支数据(开支all); }
   加载当天();
 }
@@ -1399,7 +1359,7 @@ function 重新算合计(日期) {
   let 开支all = 读开支数据();
   let allV = 获取所有村庄();
   let 当天 = all[日期] || {};
-  let 总桶 = 0, 总钱 = 0;
+  let 总桶 = 0, 总钱 = 0, 有记录 = 0;
   for (let i=0; i<allV.length; i++) {
     let d = 当天[allV[i]] || {桶:'',价:''};
     let 桶 = parseFloat(d.桶) || 0;
@@ -1407,35 +1367,48 @@ function 重新算合计(日期) {
     let 钱 = 桶 * 价;
     let el = document.getElementById('钱_'+i);
     if (el) el.textContent = 钱>0?钱:'';
-    总桶 += 桶; 总钱 += 钱;
+    if (桶>0) { 总桶 += 桶; 有记录++; }
+    总钱 += 钱;
   }
   document.getElementById('合计桶').textContent = 总桶;
   document.getElementById('合计钱').textContent = 总钱;
+
   let allExp = 获取所有开支项();
   let 当天开支 = 开支all[日期] || {};
   let 总开支额 = 0;
-  for (let i=0; i<allExp.length; i++) 总开支额 += parseFloat(当天开支[allExp[i]]) || 0;
+  for (let i=0; i<allExp.length; i++) {
+    let amt = parseFloat(当天开支[allExp[i]]) || 0;
+    总开支额 += amt;
+  }
   let 合计开支el = document.getElementById('合计开支');
   if (合计开支el) 合计开支el.textContent = 总开支额;
+
   document.getElementById('今日桶数').textContent = 总桶;
   document.getElementById('今日金额').textContent = 总钱;
   document.getElementById('今日开支').textContent = 总开支额;
   let 净 = 总钱 - 总开支额;
   document.getElementById('净收入').textContent = (净>=0?'+':'')+净;
   let box = document.getElementById('净收入框');
-  if (净 < 0) box.classList.add('negative'); else box.classList.remove('negative');
+  if (净 < 0) { box.classList.add('negative'); } else { box.classList.remove('negative'); }
 }
 
 function 保存当日() {
   let 日期 = document.getElementById('选择日期').value || 今天();
-  alert('✅ ' + 日期 + ' 已保存到云端');
+  let all = 读数据();
+  if (!all[日期]) all[日期] = {};
+  存数据(all); 存开支数据(读开支数据());
+  alert('✅ ' + 日期 + ' 已保存');
 }
 
 function 清空当日() {
   if (!confirm('确定清空当天的所有数据？')) return;
   let 日期 = document.getElementById('选择日期').value || 今天();
-  let all = 读数据(); all[日期] = {}; 存数据(all);
-  let 开支all = 读开支数据(); 开支all[日期] = {}; 存开支数据(开支all);
+  let all = 读数据();
+  all[日期] = {};
+  存数据(all);
+  let 开支all = 读开支数据();
+  开支all[日期] = {};
+  存开支数据(开支all);
   加载当天();
 }
 
@@ -1447,50 +1420,103 @@ function 刷新分析(排序方式) {
   let 村统计 = {};
   for (let v of allV) 村统计[v] = {桶:0, 钱:0};
   let 每日 = [];
+  let 天数 = 0;
+
   for (let 日期 in all) {
     let 日桶 = 0, 日钱 = 0;
-    let 天 = all[日期]; let 有数据 = false;
-    for (let v of allV) { let d = 天[v] || {}; let 桶 = parseFloat(d.桶) || 0; let 价 = parseFloat(d.价) || 0; 村统计[v].桶 += 桶; 村统计[v].钱 += 桶 * 价; 日桶 += 桶; 日钱 += 桶 * 价; if (桶>0) 有数据 = true; }
+    let 天 = all[日期];
+    let 有数据 = false;
+    for (let v of allV) {
+      let d = 天[v] || {};
+      let 桶 = parseFloat(d.桶) || 0;
+      let 价 = parseFloat(d.价) || 0;
+      村统计[v].桶 += 桶;
+      村统计[v].钱 += 桶 * 价;
+      日桶 += 桶;
+      日钱 += 桶 * 价;
+      if (桶>0) 有数据 = true;
+    }
     let allExp = 获取所有开支项();
     let 当天开支 = 开支all[日期] || {};
     let 日开支 = 0;
-    for (let exp of allExp) 日开支 += parseFloat(当天开支[exp]) || 0;
-    总开支额 += 日开支; 总桶 += 日桶; 总钱 += 日钱;
+    for (let exp of allExp) {
+      日开支 += parseFloat(当天开支[exp]) || 0;
+    }
+    总开支额 += 日开支;
+    总桶 += 日桶;
+    总钱 += 日钱;
+    if (有数据) 天数++;
     每日.push({日期, 桶:日桶, 钱:日钱, 开支:日开支});
   }
+
   document.getElementById('总桶数').textContent = 总桶;
   document.getElementById('总金额').textContent = 总钱;
   document.getElementById('总开支').textContent = 总开支额;
   let 总净 = 总钱 - 总开支额;
   document.getElementById('总净收入').textContent = (总净>=0?'+':'')+总净;
   let 总框 = document.getElementById('总净收入框');
-  if (总净 < 0) 总框.classList.add('negative'); else 总框.classList.remove('negative');
+  if (总净 < 0) { 总框.classList.add('negative'); } else { 总框.classList.remove('negative'); }
 
   let 排行方式 = 排序方式 || '桶';
   let 排行 = Object.entries(村统计).filter(([k,v]) => v.桶>0);
   排行.sort((a,b) => b[1][排行方式] - a[1][排行方式]);
+
   let html = '';
-  if (排行.length == 0) { html = '<div class="empty-msg">暂无数据</div>'; }
-  else {
+  if (排行.length == 0) {
+    html = '<div class="empty-msg">暂无数据</div>';
+  } else {
     let max = 排行[0][1][排行方式] || 1;
     for (let [村, v] of 排行) {
       let pct = Math.min(100, Math.round(v[排行方式]/max*100));
       let 单位 = 排行方式=='桶' ? '桶' : '元';
-      html += '<div style="display:flex;align-items:center;padding:8px 0;border-bottom:1px solid #eee;"><div style="width:80px;font-weight:500;">'+村+'</div><div style="flex:1;height:20px;background:#e8f5e9;border-radius:10px;overflow:hidden;margin:0 10px;"><div style="height:100%;width:'+pct+'%;background:#2d8a4e;border-radius:10px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:11px;color:white;font-weight:600;min-width:40px;">'+v[排行方式]+单位+'</div></div><div style="width:70px;text-align:right;font-size:12px;color:#888;">'+(v.桶>0?(v.桶+'桶 · '+v.钱+'元'):'')+'</div></div>';
+      html += '<div style="display:flex;align-items:center;padding:8px 0;border-bottom:1px solid #eee;">'+
+        '<div style="width:80px;font-weight:500;">'+村+'</div>'+
+        '<div style="flex:1;height:20px;background:#e8f5e9;border-radius:10px;overflow:hidden;margin:0 10px;">'+
+        '<div style="height:100%;width:'+pct+'%;background:#2d8a4e;border-radius:10px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:11px;color:white;font-weight:600;min-width:40px;">'+v[排行方式]+单位+'</div></div>'+
+        '<div style="width:70px;text-align:right;font-size:12px;color:#888;">'+(v.桶>0?(v.桶+'桶 · '+v.钱+'元'):'')+'</div></div>';
     }
   }
   document.getElementById('排行列表').innerHTML = html;
 
   每日.sort((a,b) => a.日期 > b.日期 ? -1 : 1);
   let dhtml = '';
-  if (每日.length == 0) { dhtml = '<div class="empty-msg">暂无数据</div>'; }
-  else { for (let d of 每日) { if (d.桶 == 0 && d.开支 == 0) continue; let 净额 = d.钱 - d.开支; dhtml += '<div class="record-item" style="cursor:pointer;" onclick="跳到日期(\''+d.日期+'\')"><div class="record-info"><div class="record-village">'+d.日期+'</div><div class="record-time" style="color:'+(净额>=0?'#2d8a4e':'#c62828')+';">净收入 '+(净额>=0?'+':'')+净额+'元</div></div><div class="record-amount">'+d.桶+'桶 / '+d.钱+'元</div></div>'; } }
+  if (每日.length == 0) {
+    dhtml = '<div class="empty-msg">暂无数据</div>';
+  } else {
+    for (let d of 每日) {
+      if (d.桶 == 0 && d.开支 == 0) continue;
+      let 净额 = d.钱 - d.开支;
+      dhtml += '<div class="record-item" style="cursor:pointer;" onclick="跳到日期(\''+d.日期+'\')">'+
+        '<div class="record-info"><div class="record-village">'+d.日期+'</div>'+
+        '<div class="record-time" style="color:'+(净额>=0?'#2d8a4e':'#c62828')+';">净收入 '+(净额>=0?'+':'')+净额+'元</div></div>'+
+        '<div class="record-amount">'+d.桶+'桶 / '+d.钱+'元</div></div>';
+    }
+  }
   document.getElementById('每日列表').innerHTML = dhtml;
 
   let dates = Object.keys(all).sort().reverse();
   let hhtml = '';
-  if (dates.length == 0) { hhtml = '<div class="empty-msg">暂无数据</div>'; }
-  else { for (let d of dates) { let 天 = all[d]; let 桶 = 0, 钱 = 0; for (let v of allV) { let x = 天[v] || {}; 桶 += parseFloat(x.桶) || 0; 钱 += (parseFloat(x.桶)||0) * (parseFloat(x.价)||0); } let allExp = 获取所有开支项(); let 天开支 = 开支all[d] || {}; let 开支 = 0; for (let exp of allExp) { 开支 += parseFloat(天开支[exp]) || 0; } hhtml += '<div class="record-item" style="cursor:pointer;" onclick="跳到日期(\''+d+'\')"><div class="record-info"><div class="record-village">'+d+'</div><div class="record-time">'+桶+'桶 · 收入'+钱+' · 支出'+开支+'</div></div><div style="color:#2d8a4e;font-size:13px;">查看 →</div></div>'; } }
+  if (dates.length == 0) {
+    hhtml = '<div class="empty-msg">暂无数据</div>';
+  } else {
+    for (let d of dates) {
+      let 天 = all[d];
+      let 桶 = 0, 钱 = 0;
+      for (let v of allV) {
+        let x = 天[v] || {};
+        桶 += parseFloat(x.桶) || 0;
+        钱 += (parseFloat(x.桶)||0) * (parseFloat(x.价)||0);
+      }
+      let allExp = 获取所有开支项();
+      let 天开支 = 开支all[d] || {};
+      let 开支 = 0;
+      for (let exp of allExp) { 开支 += parseFloat(天开支[exp]) || 0; }
+      hhtml += '<div class="record-item" style="cursor:pointer;" onclick="跳到日期(\''+d+'\')">'+
+        '<div class="record-info"><div class="record-village">'+d+'</div>'+
+        '<div class="record-time">'+桶+'桶 · 收入'+钱+' · 支出'+开支+'</div></div>'+
+        '<div style="color:#2d8a4e;font-size:13px;">查看 →</div></div>';
+    }
+  }
   document.getElementById('历史记录').innerHTML = hhtml;
 }
 
@@ -1508,7 +1534,12 @@ function 跳到日期(d) {
 }
 
 function 导出数据() {
-  let 包 = {数据: 读数据(), 自定义村镇: 读自定义(), 开支数据: 读开支数据(), 自定义开支项: 读自定义开支(), 欠款数据: 读欠款(), 提醒天数: 读提醒天数()};
+  let d = 读数据();
+  let 自定义 = 读自定义();
+  let 开支d = 读开支数据();
+  let 自定义开支 = 读自定义开支();
+  let 欠款d = 读欠款();
+  let 包 = {数据: d, 自定义村镇: 自定义, 开支数据: 开支d, 自定义开支项: 自定义开支, 欠款数据: 欠款d, 提醒天数: 读提醒天数()};
   let blob = new Blob([JSON.stringify(包,null,2)], {type:'application/json'});
   let a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -1527,15 +1558,21 @@ function 导入数据() {
     r.onload = function(ev) {
       try {
         let 包 = JSON.parse(ev.target.result);
+        let d = 包.数据 || 包;
+        let 自定义 = 包.自定义村镇 || [];
+        let 开支d = 包.开支数据 || {};
+        let 自定义开支 = 包.自定义开支项 || [];
+        let 欠款d = 包.欠款数据 || [];
         if (!confirm('导入会覆盖当前所有数据，确定？')) return;
-        存数据(包.数据 || {});
-        存自定义(包.自定义村镇 || []);
-        存开支数据(包.开支数据 || {});
-        存自定义开支(包.自定义开支项 || []);
-        存欠款(包.欠款数据 || []);
-        if (包.提醒天数) { _dataCache.reminderDays = 包.提醒天数; saveToCloud('reminder_days', 包.提醒天数); }
-        alert('✅ 恢复成功！');
-        加载当天(); 刷新分析();
+        存数据(d);
+        存自定义(自定义);
+        存开支数据(开支d);
+        存自定义开支(自定义开支);
+        存欠款(欠款d);
+        if (包.提醒天数) { localStorage.setItem('卖水提醒天数', 包.提醒天数); }
+        alert('✅ 恢复成功！共 ' + Object.keys(d).length + ' 天记录');
+        加载当天();
+        刷新分析();
       } catch(e) { alert('❌ 文件格式不对'); }
     };
     r.readAsText(f);
@@ -1546,8 +1583,11 @@ function 导入数据() {
 function 清空全部数据() {
   if (!confirm('确定清空所有数据？不可恢复！')) return;
   if (!confirm('再次确认？')) return;
-  存数据({}); 存开支数据({}); 存欠款([]);
-  加载当天(); 刷新分析();
+  存数据({});
+  存开支数据({});
+  存欠款([]);
+  加载当天();
+  刷新分析();
   alert('已清空');
 }
 
@@ -1564,15 +1604,9 @@ function 切换标签(n) {
   if (n == 'settings') { document.getElementById('提醒天数').value = 读提醒天数(); 刷新分析(window._排序方式); }
 }
 
-// ========== 启动 ==========
-async function 启动() {
-  let ok = await initServer();
-  await loadAllData();
-  if (ok) startPolling();
-  document.getElementById('选择日期').value = 今天();
-  加载当天();
-}
-启动();
+// 初始化
+document.getElementById('选择日期').value = 今天();
+加载当天();
 </script>
 </body>
 </html>
